@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Puff Store Hub</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="logo">Puff Store Hub</div>
+      <nav>
+        <a href="#" data-page="lottery" class="active">Lottery</a>
+        <a href="#" data-page="schedules">Schedules</a>
+        <a href="#" data-page="timesheets">Timesheets</a>
+        <a href="#" data-page="pricing">Pricing / Promos</a>
+        <a href="#" data-page="item-search">Item Search</a>
+        <a href="#" data-page="people">People Docs</a>
+      </nav>
+      <div class="store-info">
+        <label for="storeSelect">Store:</label>
+        <select id="storeSelect">
+          <option value="4">4 — Juniata</option>
+          <option value="7">7 — Bellwood</option>
+          <option value="17">17 — Mt. Joy</option>
+        </select>
+      </div>
+    </aside>
+
+    <main class="content">
+      <div id="page-lottery" class="page active">
+        <h1>Daily Lottery</h1>
+        <p>Form goes here. Stores fill this out and click Submit.</p>
+      </div>
+      <div id="page-schedules" class="page">
+        <h1>Schedules</h1>
+        <p>Schedule form or list goes here.</p>
+      </div>
+      <div id="page-timesheets" class="page">
+        <h1>Timesheets</h1>
+        <p>Timesheet form goes here.</p>
+      </div>
+      <div id="page-pricing" class="page">
+        <h1>Pricing / Promos</h1>
+        <p>Pricing and promo files go here.</p>
+      </div>
+      <div id="page-item-search" class="page">
+        <h1>Item Search</h1>
+        <p>Item lookup goes here.</p>
+      </div>
+      <div id="page-people" class="page">
+        <h1>People Docs</h1>
+        <p>People documents go here.</p>
+      </div>
+    </main>
+
+    <aside class="chat-panel">
+      <div class="chat-header">
+        <span>Store Chat</span>
+        <button id="toggleChat">–</button>
+      </div>
+      <div class="chat-messages" id="chatMessages">
+        <div class="message office">Office: Good morning. Any issues today?</div>
+        <div class="message store">Store: All good so far.</div>
+      </div>
+      <div class="chat-input">
+        <input type="text" id="chatInput" placeholder="Type a message…">
+        <button id="sendChat">Send</button>
+      </div>
+    </aside>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
