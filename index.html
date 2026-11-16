@@ -33,8 +33,117 @@
 
     <main class="content">
       <div id="page-lottery" class="page active">
-        <h1>Daily Lottery</h1>
-        <p>Form goes here. Stores fill this out and click Submit.</p>
+        <div class="form-section">
+  <div class="form-header">
+    <h2>Daily Instant Ticket — Store 4 Juniata</h2>
+    <p class="form-date">Date: <span id="todayDate"></span></p>
+    <div class="banner">Fill yellow fields. Ending # cannot be lower than Starting #. Wrong price section shows error.</div>
+  </div>
+
+  <div class="activity-block">
+    <h3>Daily Activity</h3>
+    <div class="form-grid">
+      <label>Instant Tickets Sold (count)<input type="number" id="instSold" min="0" class="entry"></label>
+      <label>Instant Tickets Paid<input type="number" id="instPaid" step="0.01" class="entry"></label>
+      <label>Online Sold<input type="number" id="onlineSold" step="0.01" class="entry"></label>
+      <label>Online Pay<input type="number" id="onlinePay" step="0.01" class="entry"></label>
+      <label>Credit Cards<input type="number" id="cc" step="0.01" class="entry"></label>
+      <label>Vouchers<input type="number" id="vouchers" step="0.01" class="entry"></label>
+    </div>
+    <div class="totals">
+      <div>Instant Net: <strong id="instNet">0.00</strong></div>
+      <div>Online Net: <strong id="onlineNet">0.00</strong></div>
+    </div>
+  </div>
+
+  <div class="pay-block">
+    <h3>Pay In / Pay Out</h3>
+    <div class="form-grid">
+      <label>Pay In Amount<input type="number" id="payIn" step="0.01" class="entry"></label>
+      <label>Pay In Source
+        <select id="payInSource" class="entry">
+          <option value="">—</option>
+          <option>Lotto Safe</option>
+          <option>Register</option>
+          <option>Machine</option>
+          <option>Other</option>
+        </select>
+      </label>
+      <label>Pay Out Amount<input type="number" id="payOut" step="0.01" class="entry"></label>
+      <label>Pay Out Source
+        <select id="payOutSource" class="entry">
+          <option value="">—</option>
+          <option>Lotto Safe</option>
+          <option>Register</option>
+          <option>Machine</option>
+          <option>Other</option>
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <div class="deposit-block">
+    <h3>Net Deposit</h3>
+    <div class="big-total">Total Deposit: <strong id="netDeposit">0.00</strong></div>
+  </div>
+
+  <div class="ticket-entry">
+    <h3>Ticket Entry</h3>
+    <table id="ticketTable">
+      <thead>
+        <tr>
+          <th>Price</th>
+          <th>Bin #</th>
+          <th>Game / Book #</th>
+          <th>Starting #</th>
+          <th>Ending #</th>
+          <th>Pack Status</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <select class="price entry">
+              <option value="">—</option>
+              <option value="1">$1</option>
+              <option value="2">$2</option>
+              <option value="3">$3</option>
+              <option value="5">$5</option>
+              <option value="10">$10</option>
+              <option value="20">$20</option>
+              <option value="30">$30</option>
+            </select>
+          </td>
+          <td><input type="text" class="bin entry"></td>
+          <td><input type="text" class="game entry"></td>
+          <td><input type="number" class="start entry"></td>
+          <td><input type="number" class="end entry"></td>
+          <td>
+            <select class="status entry">
+              <option value="">—</option>
+              <option>Open</option>
+              <option>Activated</option>
+              <option>Partial Pack Settle</option>
+              <option>Settled</option>
+            </select>
+          </td>
+          <td class="row-status"></td>
+          <td><button type="button" class="remove-row">×</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <button type="button" id="addRow">+ Add Ticket Row</button>
+    <div id="formErrors" class="errors"></div>
+  </div>
+
+  <div class="form-actions">
+    <button id="submitLottery" class="submit-btn">Submit Daily Lottery</button>
+    <div id="submitStatus"></div>
+  </div>
+</div>
+
       </div>
       <div id="page-schedules" class="page">
         <h1>Schedules</h1>
