@@ -1,16 +1,131 @@
 document.addEventListener('DOMContentLoaded', () => {
   const today = new Date();
-  const dateEl = document.getElementById('todayDate');
-  if (dateEl) dateEl.textContent = today.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+  document.getElementById('todayDate').textContent = today.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
 
-  // Simple game lookup placeholder — replace with real list later
-  const gameNames = {
-    '1814': 'Example Game Name',
-    // Add more as needed
+  const PRICES = [1, 2, 3, 5, 10, 20, 30];
+  const ROWS_PER_PRICE = 6;
+
+  // Placeholder game list — replace with real master list later
+  const GAME_LIST = {
+    '1814': { name: 'Sample $1 Game', price: 1, tickets: 300 },
+    // Add more book numbers here
   };
 
-  function calcTotals() {
-    const instSold = parseFloat(document.getElementById('instSold')?.value) || 0;
+  function buildSections() {
+    const container = document.getElementById('priceSections');
+    container.innerHTML = '';
+    PRICES.forEach(price => {
+      const section = document.createElement('div');
+      section.className = 'price-section';
+      section.dataset.price = price;
+      section.innerHTML = `
+        <h4>$${price} Tickets</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Bin #</th>
+              <th>Game / Book #</th>
+              <th>Game Name</th>
+              <th>Starting #</th>
+              <th>Ending #</th>
+              <th>Sold</th>
+              <th>Value</th>
+              <th>Pack Status</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="section-total">Section total: <span class="sec-tickets">0</span> tickets / $<span class="sec-value">0.00</span></div>
+      `;
+      const tbody = section.querySelector('tbody');
+      for (let i = 0; i < ROWS_PER_PRICE; i++) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><input type="text" class="bin entry"></td>
+          <td><input type="text" class="game entry"></td>
+          <td class="auto-cell game-name"></td>
+          <td><input type="number" class="start entry"></td>
+          <td><input type="number" class="end entry"></td>
+          <td class="auto-cell sold">0</td>
+          <td class="auto-cell value">0.00</td>
+          <td>
+            <select class="status entry">
+              <option value="">—</option>
+              <option>Open</option>
+              <option>Activated</option>
+              <option>Partial Pack Settle</option>
+              <option>Settled</option>
+            </select>
+          </td>
+          <td class="auto-cell row-status"></td>
+        `;
+        tbody.appendChild(tr);
+      }
+      container.appendChild(section);
+    });
+    bindAll();
+  }
+
+  function bindAll() {
+    document.querySelectorAll('.price-section input, .price-section select').forEach(el => {
+      el.addEventListener('input', recalc);
+      el.addEventListener('change', recalc);
+    });
+    document.querySelectorAll('#page-lottery .entry').forEach(el => {
+      el.addEventListener('input', recalc);
+    });
+    recalc();
+  }
+
+  function recalc() {
+    let totalTickets = 0;
+    let totalValue = 0;
+    const errors = [];
+
+    document.querySelectorAll('.price-section').forEach(section => {
+      const price = parseInt(section.dataset.price, 10);
+      let secTickets = 0;
+      let secValue = 0;
+
+      section.querySelectorAll('tbody tr').forEach(tr => {
+        const book = tr.querySelector('.game')?.value.trim();
+        const start = parseFloat(tr.querySelector('.start')?.value);
+        const end = parseFloat(tr.querySelector('.end')?.value);
+        const nameCell = tr.querySelector('.game-name');
+        const soldCell = tr.querySelector('.sold');
+        const valueCell = tr.querySelector('.value');
+        const statusCell = tr.querySelector('.row-status');
+
+        let game = GAME_LIST[book] || null;
+        if (nameCell) nameCell.textContent = game ? game.name : (book ? 'Unknown' : '');
+
+        let sold = 0;
+        let value = 0;
+        if (!isNaN(start) && !isNaN(end) && end >= start) {
+          sold = end - start;
+          value = sold * price;
+          if (statusCell) { statusCell.textContent = ''; statusCell.style.color = ''; }
+        } else if (!isNaN(start) && !isNaN(end) && end < start) {
+          if (statusCell) { statusCell.textContent = 'ERROR'; statusCell.style.color = '#ff4466'; }
+          errors.push('Ending < Starting');
+        }
+
+        if (soldCell) soldCell.textContent = sold;
+        if (valueCell) valueCell.textContent = value.toFixed(2);
+        secTickets += sold;
+        secValue += value;
+      });
+
+      section.querySelector('.sec-tickets').textContent = secTickets;
+      section.querySelector('.sec-value').textContent = secValue.toFixed(2);
+      totalTickets += secTickets;
+      totalValue += secValue;
+    });
+
+    const instSoldEl = document.getElementById('instSold');
+    if (instSoldEl) instSoldEl.value = totalTickets;
+
     const instPaid = parseFloat(document.getElementById('instPaid')?.value) || 0;
     const onlineSold = parseFloat(document.getElementById('onlineSold')?.value) || 0;
     const onlinePay = parseFloat(document.getElementById('onlinePay')?.value) || 0;
@@ -18,95 +133,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const payIn = parseFloat(document.getElementById('payIn')?.value) || 0;
     const payOut = parseFloat(document.getElementById('payOut')?.value) || 0;
 
-    const instNet = instSold - instPaid;
+    const instNet = totalValue - instPaid;
     const onlineNet = onlineSold - Math.abs(onlinePay);
     const netDeposit = instNet + onlineNet - Math.abs(cc) + payIn - Math.abs(payOut);
 
-    const set = (id, val) => {
-      const el = document.getElementById(id);
-      if (el) el.textContent = val.toFixed(2);
-    };
-    set('instNet', instNet);
-    set('onlineNet', onlineNet);
-    set('netDeposit', netDeposit);
-  }
+    document.getElementById('instNet').textContent = instNet.toFixed(2);
+    document.getElementById('onlineNet').textContent = onlineNet.toFixed(2);
+    document.getElementById('netDeposit').textContent = netDeposit.toFixed(2);
 
-  function validateRows() {
-    const errors = [];
-    document.querySelectorAll('#ticketTable tbody tr').forEach((tr, i) => {
-      const start = parseFloat(tr.querySelector('.start')?.value);
-      const end = parseFloat(tr.querySelector('.end')?.value);
-      const statusCell = tr.querySelector('.row-status');
-      if (statusCell) {
-        statusCell.textContent = '';
-        statusCell.style.color = '';
-        if (!isNaN(start) && !isNaN(end) && end < start) {
-          statusCell.textContent = 'ERROR';
-          statusCell.style.color = '#ff4466';
-          errors.push('Row ' + (i + 1) + ': Ending # lower than Starting #');
-        }
-      }
-    });
     const errDiv = document.getElementById('formErrors');
-    if (errDiv) errDiv.textContent = errors.join(' | ');
-    return errors.length === 0;
+    if (errDiv) errDiv.textContent = errors.length ? 'Fix red ERROR rows before submit' : '';
   }
 
-  function bindRow(tr) {
-    const gameInput = tr.querySelector('.game');
-    const nameCell = tr.querySelector('.game-name');
-    if (gameInput && nameCell) {
-      gameInput.addEventListener('input', () => {
-        const book = gameInput.value.trim();
-        nameCell.textContent = gameNames[book] || (book ? '…' : '');
-      });
-    }
-    tr.querySelectorAll('input, select').forEach(el => {
-      el.addEventListener('input', () => { calcTotals(); validateRows(); });
-      el.addEventListener('change', () => { calcTotals(); validateRows(); });
-    });
-    tr.querySelector('.remove-row')?.addEventListener('click', () => tr.remove());
-  }
-
-  document.querySelectorAll('#page-lottery input, #page-lottery select').forEach(el => {
-    el.addEventListener('input', () => { calcTotals(); validateRows(); });
-    el.addEventListener('change', () => { calcTotals(); validateRows(); });
-  });
-
-  document.getElementById('addRow')?.addEventListener('click', () => {
-    const tbody = document.querySelector('#ticketTable tbody');
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><select class="price entry"><option value="">—</option><option value="1">$1</option><option value="2">$2</option><option value="3">$3</option><option value="5">$5</option><option value="10">$10</option><option value="20">$20</option><option value="30">$30</option></select></td>
-      <td><input type="text" class="bin entry"></td>
-      <td><input type="text" class="game entry"></td>
-      <td class="game-name"></td>
-      <td><input type="number" class="start entry"></td>
-      <td><input type="number" class="end entry"></td>
-      <td><select class="status entry"><option value="">—</option><option>Open</option><option>Activated</option><option>Partial Pack Settle</option><option>Settled</option></select></td>
-      <td class="row-status"></td>
-      <td><button type="button" class="remove-row">×</button></td>
-    `;
-    tbody.appendChild(tr);
-    bindRow(tr);
-  });
-
-  document.querySelectorAll('#ticketTable tbody tr').forEach(bindRow);
+  buildSections();
 
   document.getElementById('submitLottery')?.addEventListener('click', async () => {
-    if (!validateRows()) {
-      document.getElementById('submitStatus').textContent = 'Fix errors before submitting';
-      document.getElementById('submitStatus').style.color = '#ff4466';
-      return;
-    }
     const status = document.getElementById('submitStatus');
     status.textContent = 'Submitting...';
     status.style.color = '#00ffaa';
 
+    const tickets = [];
+    document.querySelectorAll('.price-section tbody tr').forEach(tr => {
+      const book = tr.querySelector('.game')?.value.trim();
+      if (!book) return;
+      tickets.push({
+        price: tr.closest('.price-section').dataset.price,
+        bin: tr.querySelector('.bin')?.value || '',
+        game: book,
+        start: tr.querySelector('.start')?.value || '',
+        end: tr.querySelector('.end')?.value || '',
+        status: tr.querySelector('.status')?.value || ''
+      });
+    });
+
     const data = {
       store: document.getElementById('storeSelect')?.value || '4',
       date: new Date().toISOString().slice(0, 10),
-      instSold: document.getElementById('instSold')?.value || '',
+      instSold: document.getElementById('instSold')?.value || '0',
       instPaid: document.getElementById('instPaid')?.value || '',
       onlineSold: document.getElementById('onlineSold')?.value || '',
       onlinePay: document.getElementById('onlinePay')?.value || '',
@@ -116,19 +179,8 @@ document.addEventListener('DOMContentLoaded', () => {
       payInSource: document.getElementById('payInSource')?.value || '',
       payOut: document.getElementById('payOut')?.value || '',
       payOutSource: document.getElementById('payOutSource')?.value || '',
-      tickets: []
+      tickets
     };
-
-    document.querySelectorAll('#ticketTable tbody tr').forEach(tr => {
-      data.tickets.push({
-        price: tr.querySelector('.price')?.value || '',
-        bin: tr.querySelector('.bin')?.value || '',
-        game: tr.querySelector('.game')?.value || '',
-        start: tr.querySelector('.start')?.value || '',
-        end: tr.querySelector('.end')?.value || '',
-        status: tr.querySelector('.status')?.value || ''
-      });
-    });
 
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyEpwj4kpxJEMUZoXGRHMjXCfaL6yqBFba9ahTK6ekvNW0JpB8_PzB0Q4KirmAbRekygA/exec';
     try {
@@ -138,20 +190,14 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: { 'Content-Type': 'text/plain' }
       });
       const result = await res.json();
-      if (result.ok) {
-        status.textContent = 'Submitted: ' + result.fileName;
-        status.style.color = '#00ffaa';
-      } else {
-        status.textContent = 'Error: ' + (result.error || 'Unknown');
-        status.style.color = '#ff4466';
-      }
+      status.textContent = result.ok ? ('Submitted: ' + result.fileName) : ('Error: ' + (result.error || 'Unknown'));
+      status.style.color = result.ok ? '#00ffaa' : '#ff4466';
     } catch (e) {
       status.textContent = 'Network error: ' + e.message;
       status.style.color = '#ff4466';
     }
   });
 
-  // Sidebar navigation
   document.querySelectorAll('.sidebar nav a').forEach(a => {
     a.addEventListener('click', e => {
       e.preventDefault();
