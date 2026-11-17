@@ -30,69 +30,11 @@
 
     <main class="content">
       <div id="page-lottery" class="page active">
-        <div class="form-header">
-          <h2>Daily Instant Ticket — <span id="storeName">4 Juniata</span></h2>
-          <p class="form-date">Date: <span id="todayDate"></span></p>
-          <div class="banner">Yellow cells = entry. Gray = auto. Ending # cannot be lower than Starting #.</div>
+        <div class="sheet-header">
+          <h2>Daily Instant Ticket</h2>
+          <p id="sheetStore">4 Juniata</p>
         </div>
-
-        <div class="activity-block">
-          <h3>Daily Activity</h3>
-          <div class="form-grid">
-            <label>Instant Tickets Sold (auto)<input type="number" id="instSold" readonly class="auto"></label>
-            <label>Instant Tickets Paid<input type="number" id="instPaid" step="0.01" class="entry"></label>
-            <label>Online Sold<input type="number" id="onlineSold" step="0.01" class="entry"></label>
-            <label>Online Pay<input type="number" id="onlinePay" step="0.01" class="entry"></label>
-            <label>Credit Cards<input type="number" id="cc" step="0.01" class="entry"></label>
-            <label>Vouchers<input type="number" id="vouchers" step="0.01" class="entry"></label>
-          </div>
-          <div class="totals">
-            <div>Instant Net: <strong id="instNet">0.00</strong></div>
-            <div>Online Net: <strong id="onlineNet">0.00</strong></div>
-          </div>
-        </div>
-
-        <div class="pay-block">
-          <h3>Pay In / Pay Out</h3>
-          <div class="form-grid">
-            <label>Pay In Amount<input type="number" id="payIn" step="0.01" class="entry"></label>
-            <label>Pay In Source
-              <select id="payInSource" class="entry">
-                <option value="">—</option>
-                <option>Lotto Safe</option>
-                <option>Register</option>
-                <option>Machine</option>
-                <option>Other</option>
-              </select>
-            </label>
-            <label>Pay Out Amount<input type="number" id="payOut" step="0.01" class="entry"></label>
-            <label>Pay Out Source
-              <select id="payOutSource" class="entry">
-                <option value="">—</option>
-                <option>Lotto Safe</option>
-                <option>Register</option>
-                <option>Machine</option>
-                <option>Other</option>
-              </select>
-            </label>
-          </div>
-        </div>
-
-        <div class="deposit-block">
-          <h3>Net Deposit</h3>
-          <div class="big-total">Total Deposit: <strong id="netDeposit">0.00</strong></div>
-        </div>
-
-        <div class="ticket-entry">
-          <h3>Tickets by Price</h3>
-          <div id="priceSections"></div>
-          <div id="formErrors" class="errors"></div>
-        </div>
-
-        <div class="form-actions">
-          <button id="submitLottery" class="submit-btn">Submit Daily Lottery</button>
-          <div id="submitStatus"></div>
-        </div>
+        <iframe id="lotteryFrame" class="sheet-frame" src="" frameborder="0"></iframe>
       </div>
 
       <div id="page-schedules" class="page"><h1>Schedules</h1><p>Coming next.</p></div>

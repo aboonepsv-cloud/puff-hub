@@ -9,43 +9,20 @@ body { font-family: system-ui, sans-serif; background: #e8eef4; color: #1a1a1a; 
 .store-info { margin-top: 40px; font-size: 13px; color: #64748b; font-weight: 600; }
 .store-info select { background: #1e293b; color: #e2e8f0; border: 1px solid #334155; padding: 6px 8px; border-radius: 4px; margin-left: 6px; width: 140px; }
 
-.content { flex: 1; padding: 20px; overflow-y: auto; background: #e8eef4; }
-.page { display: none; }
-.page.active { display: block; }
+.content { flex: 1; padding: 16px; overflow: hidden; background: #e8eef4; display: flex; flex-direction: column; }
+.page { display: none; flex: 1; flex-direction: column; }
+.page.active { display: flex; }
+
+.sheet-header { margin-bottom: 8px; }
+.sheet-header h2 { font-size: 18px; }
+.sheet-header p { color: #475569; font-weight: 600; }
+.sheet-frame { flex: 1; width: 100%; border: 1px solid #d1d9e0; border-radius: 6px; background: #fff; }
 
 .chat-panel { width: 300px; background: #0d1225; border-left: 1px solid #1a2340; display: flex; flex-direction: column; color: #e0f0ff; }
 .chat-header { padding: 15px; background: #121830; display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 16px; }
 .chat-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
 .message { padding: 8px 12px; border-radius: 8px; max-width: 80%; font-weight: 600; font-size: 15px; }
 .message.office { background: #1a2340; align-self: flex-start; }
-.message.store { background: linear-gradient(135deg, #00ffaa, #aa44ff); color: #050814; align-self: flex-end; }
 .chat-input { display: flex; padding: 10px; border-top: 1px solid #1a2340; }
 .chat-input input { flex: 1; padding: 10px; background: #121830; border: none; color: #e0f0ff; border-radius: 6px 0 0 6px; }
 .chat-input button { padding: 10px 16px; background: #00ffaa; color: #050814; border: none; border-radius: 0 6px 6px 0; cursor: pointer; font-weight: bold; }
-
-.form-header { margin-bottom: 16px; }
-.form-date { color: #475569; font-weight: 600; }
-.banner { background: #fef3c7; color: #92400e; padding: 8px 12px; border-radius: 4px; font-weight: 600; margin-top: 8px; border: 1px solid #fcd34d; }
-
-.activity-block, .pay-block, .deposit-block, .ticket-entry { background: #f1f5f9; padding: 16px; border-radius: 8px; margin-bottom: 16px; border: 1px solid #d1d9e0; }
-.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
-.form-grid label { display: flex; flex-direction: column; font-size: 14px; font-weight: 600; color: #334155; }
-.form-grid input.entry, .form-grid select.entry { margin-top: 4px; padding: 8px; background: #fef9c3; color: #1a1a1a; border: 1px solid #eab308; border-radius: 4px; font-weight: 600; }
-.form-grid input.auto { margin-top: 4px; padding: 8px; background: #d1d9e0; color: #475569; border: 1px solid #b0b8c0; border-radius: 4px; font-weight: 600; }
-.totals { display: flex; gap: 20px; margin-top: 12px; font-weight: 600; }
-.big-total { font-size: 20px; font-weight: 700; color: #059669; }
-
-.price-section { margin-bottom: 20px; }
-.price-section h4 { color: #1e293b; margin-bottom: 8px; font-size: 16px; display: flex; align-items: center; gap: 10px; }
-.price-section table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.price-section th { background: #e2e8f0; padding: 6px; text-align: left; color: #475569; font-weight: 700; border-bottom: 1px solid #d1d9e0; }
-.price-section td { padding: 3px; }
-.price-section input.entry, .price-section select.entry { width: 100%; padding: 5px; background: #fef9c3; color: #1a1a1a; border: 1px solid #eab308; border-radius: 3px; font-weight: 600; }
-.price-section .auto-cell { background: #d1d9e0; color: #334155; padding: 5px; border-radius: 3px; min-height: 28px; }
-.section-total { font-weight: 700; color: #059669; margin-top: 4px; }
-.add-row { background: #d1d9e0; color: #1e293b; border: 1px solid #b0b8c0; border-radius: 4px; padding: 2px 8px; font-size: 12px; cursor: pointer; font-weight: 600; }
-.remove-row { background: #fecaca; color: #991b1b; border: none; border-radius: 3px; padding: 2px 6px; cursor: pointer; font-weight: 700; }
-
-.errors { color: #dc2626; font-weight: 600; margin-top: 8px; }
-.submit-btn { background: #f59e0b; color: #0f172a; border: none; padding: 12px 24px; font-size: 16px; font-weight: 700; border-radius: 6px; cursor: pointer; }
-#submitStatus { margin-top: 10px; font-weight: 600; }
