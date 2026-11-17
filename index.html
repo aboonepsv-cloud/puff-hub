@@ -30,31 +30,27 @@
 
     <main class="content">
       <div id="page-lottery" class="page active">
-        <div class="sheet-header">
-          <h2>Daily Instant Ticket</h2>
-          <p id="sheetStore">4 Juniata</p>
-        </div>
+        <div class="sheet-header"><h2>Daily Instant Ticket</h2><p id="lotteryStore">4 Juniata</p></div>
         <iframe id="lotteryFrame" class="sheet-frame" src="" frameborder="0"></iframe>
       </div>
-
-      <div id="page-schedules" class="page"><h1>Schedules</h1><p>Coming next.</p></div>
-      <div id="page-timesheets" class="page"><h1>Timesheets</h1><p>Coming next.</p></div>
+      <div id="page-schedules" class="page">
+        <div class="sheet-header"><h2>Schedule</h2><p id="schedStore">4 Juniata</p></div>
+        <iframe id="schedFrame" class="sheet-frame" src="" frameborder="0"></iframe>
+      </div>
+      <div id="page-timesheets" class="page">
+        <div class="sheet-header"><h2>Timesheet</h2><p id="tsStore">4 Juniata</p></div>
+        <iframe id="tsFrame" class="sheet-frame" src="" frameborder="0"></iframe>
+      </div>
       <div id="page-pricing" class="page"><h1>Pricing / Promos</h1><p>Coming next.</p></div>
       <div id="page-item-search" class="page"><h1>Item Search</h1><p>Coming next.</p></div>
       <div id="page-people" class="page"><h1>People Docs</h1><p>Coming next.</p></div>
     </main>
 
     <button id="reopenChat" class="reopen-chat">Chat</button>
-
     <aside class="chat-panel">
       <div class="chat-header"><span>Store Chat</span><button id="toggleChat">×</button></div>
-      <div class="chat-messages" id="chatMessages">
-        <div class="message office">Office: Good morning.</div>
-      </div>
-      <div class="chat-input">
-        <input type="text" id="chatInput" placeholder="Type a message…">
-        <button id="sendChat">Send</button>
-      </div>
+      <div class="chat-messages" id="chatMessages"><div class="message office">Office: Good morning.</div></div>
+      <div class="chat-input"><input type="text" id="chatInput" placeholder="Type a message…"><button id="sendChat">Send</button></div>
     </aside>
   </div>
   <script src="app.js"></script>
