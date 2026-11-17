@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const id = SHEETS[store];
     const frame = document.getElementById('lotteryFrame');
     if (id && frame) {
-      frame.src = 'https://docs.google.com/spreadsheets/d/' + id + '/preview';
+      frame.src = 'https://docs.google.com/spreadsheets/d/' + id + '/edit?usp=sharing&rm=minimal';
     }
     const label = document.getElementById('sheetStore');
     if (label) label.textContent = NAMES[store] || store;
@@ -32,4 +32,21 @@ document.addEventListener('DOMContentLoaded', () => {
       if (page) page.classList.add('active');
     });
   });
+
+  // Chat toggle
+  const chatPanel = document.querySelector('.chat-panel');
+  const toggleBtn = document.getElementById('toggleChat');
+  const reopenBtn = document.getElementById('reopenChat');
+  if (toggleBtn && chatPanel) {
+    toggleBtn.addEventListener('click', () => {
+      chatPanel.classList.add('closed');
+      if (reopenBtn) reopenBtn.style.display = 'block';
+    });
+  }
+  if (reopenBtn && chatPanel) {
+    reopenBtn.addEventListener('click', () => {
+      chatPanel.classList.remove('closed');
+      reopenBtn.style.display = 'none';
+    });
+  }
 });
