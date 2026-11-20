@@ -1,1 +1,292 @@
-$(cat /workspace/artifacts/Index.html)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Puff Store Hub</title>
+<style>
+:root {
+  --bg: #0b1220;
+  --panel: #121a2e;
+  --panel-2: #1a2340;
+  --line: #2a3a5a;
+  --text: #c4b5fd;
+  --muted: #94a3b8;
+  --accent: #2dd4bf;
+  --accent-2: #5eead4;
+  --gold: #2dd4bf;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
+.app { display: flex; height: 100vh; }
+.sidebar { width: 200px; background: var(--panel); border-right: 1px solid var(--line); color: var(--text); display: flex; flex-direction: column; padding: 12px; transition: width 0.2s ease; }
+.sidebar.collapsed { width: 56px; padding: 12px 6px; }
+.sidebar.collapsed .logo-wrap img { width: 36px; }
+.sidebar.collapsed nav a span { display: none; }
+.sidebar.collapsed .store-info { display: none; }
+.collapse-btn { background: none; border: 1px solid var(--line); color: var(--accent); border-radius: 6px; padding: 4px 8px; cursor: pointer; margin-bottom: 10px; font-size: 14px; }
+.logo-wrap { text-align: center; margin-bottom: 16px; }
+.logo-wrap img { width: 120px; border-radius: 8px; border: 2px solid var(--accent); }
+.sidebar nav a { display: block; padding: 10px 8px; color: var(--muted); text-decoration: none; border-radius: 8px; margin-bottom: 4px; font-weight: 600; font-size: 14px; }
+.sidebar nav a.active, .sidebar nav a:hover { background: linear-gradient(90deg, #0d9488, #2dd4bf); color: #0b1220; }
+.store-info { margin-top: auto; font-size: 12px; color: var(--muted); }
+.store-info select { background: var(--panel-2); color: var(--text); border: 1px solid var(--line); padding: 6px; border-radius: 6px; width: 100%; margin-top: 4px; }
+.content { flex: 1; padding: 12px; overflow: hidden; display: flex; flex-direction: column; }
+.page { display: none; flex: 1; flex-direction: column; }
+.page.active { display: flex; }
+.sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.sheet-header h2 { font-size: 18px; color: var(--accent-2); }
+.tabs { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+.tab { background: var(--panel-2); color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; cursor: pointer; font-size: 13px; font-weight: 600; }
+.tab.active { background: var(--accent); color: #0b1220; border-color: var(--accent); }
+.sheet-frame { flex: 1; width: 100%; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+.folder-list { display: flex; flex-direction: column; gap: 10px; padding: 16px; max-width: 640px; }
+.folder-btn { display: block; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; font-weight: 600; font-size: 15px; color: var(--text); text-decoration: none; }
+.folder-btn:hover { background: var(--accent); color: #0b1220; }
+.chat-panel { width: 280px; background: var(--panel); border-left: 1px solid var(--line); display: flex; flex-direction: column; }
+.chat-panel.closed { display: none; }
+.chat-header { padding: 12px; background: var(--panel-2); display: flex; justify-content: space-between; align-items: center; font-weight: 700; }
+.chat-messages { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.message { padding: 8px 10px; border-radius: 8px; max-width: 85%; font-size: 14px; }
+.message.office { background: var(--panel-2); align-self: flex-start; }
+.chat-input { display: flex; padding: 8px; border-top: 1px solid var(--line); }
+.chat-input input { flex: 1; padding: 8px; background: var(--panel-2); border: 1px solid var(--line); color: var(--text); border-radius: 6px 0 0 6px; }
+.chat-input button { padding: 8px 12px; background: var(--accent); color: #0b1220; border: none; border-radius: 0 6px 6px 0; cursor: pointer; font-weight: bold; }
+.reopen-chat { display: none; position: fixed; right: 0; top: 50%; transform: translateY(-50%); background: var(--panel); color: var(--accent); border: 1px solid var(--line); border-right: none; border-radius: 6px 0 0 6px; padding: 10px 6px; writing-mode: vertical-rl; font-weight: 700; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <button id="collapseBtn" class="collapse-btn" title="Collapse menu">◀</button>
+    <div class="logo-wrap"><img src="logo.png" alt="Puff Super Value"></div>
+    <nav>
+      <a href="#" data-page="lottery" class="active"><span>Lottery</span></a>
+      <a href="#" data-page="schedules"><span>Schedules</span></a>
+      <a href="#" data-page="timesheets"><span>Timesheets</span></a>
+      <a href="#" data-page="folders"><span>Folders</span></a>
+      <a href="#" data-page="pricing"><span>Pricing / Promos</span></a>
+      <a href="#" data-page="item-search"><span>Item Search</span></a>
+    </nav>
+    <div class="store-info">
+      <label for="storeSelect">Store:</label>
+      <select id="storeSelect">
+        <option value="4">4 — Juniata</option>
+        <option value="7">7 — Bellwood</option>
+        <option value="17">17 — Mt. Joy</option>
+      </select>
+    </div>
+  </aside>
+  <main class="content">
+    <div id="page-lottery" class="page active">
+      <div class="sheet-header"><h2>Lottery</h2><span id="lotteryStore">4 Juniata</span></div>
+      <div class="tabs" id="lottoTabs">
+        <button class="tab active" data-lotto="daily">Daily Instant</button>
+        <button class="tab" data-lotto="machine">Machine</button>
+        <button class="tab" data-lotto="pastDaily">Past Daily</button>
+        <button class="tab" data-lotto="pastMachine">Past Machine</button>
+        <button class="tab" data-lotto="deposit">Deposit Log</button>
+      </div>
+      <iframe id="lottoFrame" class="sheet-frame" src="" frameborder="0"></iframe>
+    </div>
+    <div id="page-schedules" class="page">
+      <div class="sheet-header"><h2>Schedule</h2><span id="schedStore">4 Juniata</span></div>
+      <iframe id="schedFrame" class="sheet-frame" src="" frameborder="0"></iframe>
+    </div>
+    <div id="page-timesheets" class="page">
+      <div class="sheet-header"><h2>Timesheet</h2><span id="tsStore">4 Juniata</span></div>
+      <iframe id="tsFrame" class="sheet-frame" src="" frameborder="0"></iframe>
+    </div>
+    <div id="page-folders" class="page">
+      <div class="sheet-header"><h2>Store Folders</h2><span id="folderStore">4 Juniata</span></div>
+      <div class="folder-list" id="folderList"></div>
+    </div>
+    <div id="page-pricing" class="page"><div style="padding:40px"><h1>Pricing / Promos</h1><p>Coming next.</p></div></div>
+    <div id="page-item-search" class="page"><div style="padding:40px"><h1>Item Search</h1><p>Coming next.</p></div></div>
+  </main>
+  <button id="reopenChat" class="reopen-chat">Chat</button>
+  <aside class="chat-panel">
+    <div class="chat-header"><span>Store Chat</span><button id="toggleChat" style="background:none;border:none;color:var(--accent);font-size:18px;cursor:pointer">×</button></div>
+    <div class="chat-messages" id="chatMessages"><div class="message office">Office: Good morning.</div></div>
+    <div class="chat-input"><input type="text" id="chatInput" placeholder="Type a message…"><button id="sendChat">Send</button></div>
+  </aside>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const DATA = {
+    '4': {
+      name: '4 Juniata',
+      daily: '1j5ti-mDHQXztevzN9JTXHCZlVmItFlNkfhhh5xQNAWg',
+      machine: '1cDSpgpweYMTUeKrRrT7XGuCI5RSlGSo9RnWJmEQaUqc',
+      pastDaily: '1AfzcCsYq5Xx-gkdIewGbiNstb8DmkFJx',
+      pastMachine: '1MlVaDTRdZzwC-sEobH2r6sw5mKOtTlwb',
+      deposit: '179Zyu3DJcEmaSyq1BsCI-Ruquh7qGYYnr9iVRfsN3-I',
+      schedule: '1yLYXwOfFTRuz6L1_WWT_4OpSUuJt4iRMNXA_G3ozTT8',
+      timesheet: '1FTRqMTIoqFizbfUCh13bfqtv2yksFzt8hvJdXLT5N4E',
+      folders: {
+        'Working Lottery': '1F9_BHGtnxyWqyAjlRwo1mWkA8oqnHNrX',
+        'Past Daily (submitted)': '1AfzcCsYq5Xx-gkdIewGbiNstb8DmkFJx',
+        'Past Machine (submitted)': '1MlVaDTRdZzwC-sEobH2r6sw5mKOtTlwb',
+        'Send to Office - Lottery': '1F9_BHGtnxyWqyAjlRwo1mWkA8oqnHNrX',
+        'Send to Office (all)': '1li1zwlGxdV502I-r68FWAYcIXq_Dbxf8',
+        'Payroll': '15krOU6_dlQqfL2M9linvOaKScb4oyuYM'
+      }
+    },
+    '7': {
+      name: '7 Bellwood',
+      daily: '1YB_syuyeaF-GuAQc6ePiDJaWdp3k1PXLDAoLDZC7s94',
+      machine: '',
+      pastDaily: '',
+      pastMachine: '',
+      deposit: '',
+      schedule: '1AORokd7lBmPjAMUUNtJuAy6XHVwPdZcVlzW95DzZ3a8',
+      timesheet: '1N1Da1BcHSDyogDT94C38ZXvaigMcJTa3p9v4oAQ1KY0',
+      folders: {
+        'Lottery': '10kIl4EnJrQmVdmA2NQdatameN3agflxt',
+        'Payroll': '164B6hDW23g8h1cfkjhEKkX4wdsh2cnwj',
+        'Send to Office': '1Pu9mhltpBh2PentCp43CWC6yZ_VDnMlo'
+      }
+    },
+    '17': {
+      name: '17 Mt. Joy',
+      daily: '1GG8YVoDLeTXrfKdkWYoS5ronlGgZCJ3_L8VvaxlJeq0',
+      machine: '',
+      pastDaily: '',
+      pastMachine: '',
+      deposit: '',
+      schedule: '1EEE3q32HxqzY2c84CT6D8KcwPebzooW9z5uVTgEG9wo',
+      timesheet: '1mZAC8obFVQzor_1HT9p8MTZPxNdQ1qexLWkP9fJJTys',
+      folders: {
+        'Lottery': '1FzikY0iENjB2W8bnBLlFRbMxEa96pGKb',
+        'Payroll': '1mu8BX18c_e5hKW-WYaUQoHuK7uvuZuI8',
+        'Send to Office': '1mvB021c2iznk0jVMpqCK0WZUyu1ih-3F'
+      }
+    }
+  };
+
+  let currentStore = '4';
+  let currentLotto = 'daily';
+
+  function embed(id, frameId) {
+    const f = document.getElementById(frameId);
+    if (!f) return;
+    if (id) f.src = 'https://docs.google.com/spreadsheets/d/' + id + '/edit?usp=sharing';
+    else f.src = '';
+  }
+
+  function loadLotto() {
+    const d = DATA[currentStore];
+    if (!d) return;
+    const id = d[currentLotto];
+    const frame = document.getElementById('lottoFrame');
+    if (!id) { frame.src = ''; return; }
+
+    if (currentLotto.startsWith('past')) {
+      frame.srcdoc = `
+        <div style="font-family:system-ui;padding:16px;color:#0b1220">
+          <h3 style="margin-bottom:12px">Past files</h3>
+          <p style="margin-bottom:12px;color:#475569">Click a file to open it here.</p>
+          <div id="fileList" style="display:flex;flex-direction:column;gap:8px"></div>
+          <p style="margin-top:16px;font-size:13px;color:#64748b">If the list is empty, the folder has no files yet or the list script is not set.</p>
+        </div>`;
+      const listUrl = 'https://script.google.com/macros/s/AKfycbwhI-CtvsVTfqgavG0gAUIgEi7TjAsg3wp0KqoSVuzB-gb18Hthd85QkijyEVgEUcWPkg/exec?folder=' + id;
+      fetch(listUrl)
+        .then(r => r.json())
+        .then(files => {
+          const list = frame.contentDocument.getElementById('fileList');
+          if (!files || !files.length) return;
+          files.forEach(f => {
+            const btn = document.createElement('button');
+            btn.textContent = f.name;
+            btn.style.cssText = 'text-align:left;padding:10px 12px;border:1px solid #cbd5e1;border-radius:6px;background:#f8fafc;cursor:pointer;font-weight:600';
+            btn.onclick = () => {
+              frame.src = 'https://docs.google.com/spreadsheets/d/' + f.id + '/edit?usp=sharing';
+            };
+            list.appendChild(btn);
+          });
+        })
+        .catch(() => {});
+    } else {
+      frame.src = 'https://docs.google.com/spreadsheets/d/' + id + '/edit?usp=sharing';
+    }
+  }
+
+  function loadFolders(folders) {
+    const list = document.getElementById('folderList');
+    if (!list) return;
+    list.innerHTML = '';
+    Object.entries(folders).forEach(([label, id]) => {
+      const a = document.createElement('a');
+      a.className = 'folder-btn';
+      a.textContent = label;
+      if (id) { a.href = 'https://drive.google.com/drive/folders/' + id; a.target = '_blank'; }
+      else { a.href = '#'; a.style.opacity = '0.5'; a.textContent = label + ' (not linked yet)'; }
+      list.appendChild(a);
+    });
+  }
+
+  function loadStore(store) {
+    currentStore = store;
+    const d = DATA[store];
+    if (!d) return;
+    document.getElementById('lotteryStore').textContent = d.name;
+    document.getElementById('schedStore').textContent = d.name;
+    document.getElementById('tsStore').textContent = d.name;
+    document.getElementById('folderStore').textContent = d.name;
+    embed(d.schedule, 'schedFrame');
+    embed(d.timesheet, 'tsFrame');
+    loadFolders(d.folders);
+    loadLotto();
+  }
+
+  const select = document.getElementById('storeSelect');
+  loadStore(select.value);
+  select.addEventListener('change', () => loadStore(select.value));
+
+  document.querySelectorAll('.sidebar nav a').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      document.querySelectorAll('.sidebar nav a').forEach(x => x.classList.remove('active'));
+      a.classList.add('active');
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + a.dataset.page).classList.add('active');
+    });
+  });
+
+  document.querySelectorAll('#lottoTabs .tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('#lottoTabs .tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentLotto = tab.dataset.lotto;
+      loadLotto();
+    });
+  });
+
+  const chatPanel = document.querySelector('.chat-panel');
+  const toggleBtn = document.getElementById('toggleChat');
+  const reopenBtn = document.getElementById('reopenChat');
+  toggleBtn.addEventListener('click', () => { chatPanel.classList.add('closed'); reopenBtn.style.display = 'block'; });
+  reopenBtn.addEventListener('click', () => { chatPanel.classList.remove('closed'); reopenBtn.style.display = 'none'; });
+  const sidebar = document.getElementById('sidebar');
+  const collapseBtn = document.getElementById('collapseBtn');
+  collapseBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('collapsed');
+    collapseBtn.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
+  });
+
+  document.getElementById('sendChat').addEventListener('click', () => {
+    const input = document.getElementById('chatInput');
+    if (!input.value.trim()) return;
+    const msg = document.createElement('div');
+    msg.className = 'message';
+    msg.style.alignSelf = 'flex-end';
+    msg.style.background = '#0d9488';
+    msg.style.color = '#0b1220';
+    msg.textContent = input.value;
+    document.getElementById('chatMessages').appendChild(msg);
+    input.value = '';
+  });
+});
+</script>
+</body>
+</html>
