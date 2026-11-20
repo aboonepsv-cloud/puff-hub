@@ -187,25 +187,32 @@ document.addEventListener('DOMContentLoaded', () => {
           <h3 style="margin-bottom:12px">Past files</h3>
           <p style="margin-bottom:12px;color:#475569">Click a file to open it here.</p>
           <div id="fileList" style="display:flex;flex-direction:column;gap:8px"></div>
-          <p style="margin-top:16px;font-size:13px;color:#64748b">If the list is empty, the folder has no files yet or the list script is not set.</p>
         </div>`;
       const listUrl = 'https://script.google.com/macros/s/AKfycbwhI-CtvsVTfqgavG0gAUIgEi7TjAsg3wp0KqoSVuzB-gb18Hthd85QkijyEVgEUcWPkg/exec?folder=' + id;
       fetch(listUrl)
         .then(r => r.json())
         .then(files => {
           const list = frame.contentDocument.getElementById('fileList');
-          if (!files || !files.length) return;
+          if (!files || !files.length) {
+            list.innerHTML = '<p style="color:#64748b">No files in this folder yet.</p>';
+            return;
+          }
           files.forEach(f => {
-            const btn = document.createElement('button');
-            btn.textContent = f.name;
-            btn.style.cssText = 'text-align:left;padding:10px 12px;border:1px solid #cbd5e1;border-radius:6px;background:#f8fafc;cursor:pointer;font-weight:600';
-            btn.onclick = () => {
+            const a = document.createElement('a');
+            a.textContent = f.name;
+            a.href = '#';
+            a.style.cssText = 'display:block;text-align:left;padding:10px 12px;border:1px solid #cbd5e1;border-radius:6px;background:#f8fafc;color:#0b1220;text-decoration:none;font-weight:600;margin-bottom:6px';
+            a.onclick = (e) => {
+              e.preventDefault();
               frame.src = 'https://docs.google.com/spreadsheets/d/' + f.id + '/edit?usp=sharing';
             };
-            list.appendChild(btn);
+            list.appendChild(a);
           });
         })
-        .catch(() => {});
+        .catch(() => {
+          const list = frame.contentDocument.getElementById('fileList');
+          if (list) list.innerHTML = '<p style="color:#b91c1c">Could not load file list. Check the Apps Script is deployed as Anyone.</p>';
+        });
     } else {
       frame.src = 'https://docs.google.com/spreadsheets/d/' + id + '/edit?usp=sharing';
     }
