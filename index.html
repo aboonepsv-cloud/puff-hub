@@ -87,6 +87,7 @@ body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--t
         <button class="tab" data-lotto="pastMachine">Past Machine</button>
         <button class="tab" data-lotto="deposit">Deposit Log</button>
       </div>
+      <div id="pastList" style="display:none;padding:12px;background:#fff;border:1px solid #2a3a5a;border-radius:8px;margin-bottom:8px;max-height:200px;overflow:auto"></div>
       <iframe id="lottoFrame" class="sheet-frame" src="" frameborder="0"></iframe>
     </div>
     <div id="page-schedules" class="page">
@@ -179,36 +180,37 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!d) return;
     const id = d[currentLotto];
     const frame = document.getElementById('lottoFrame');
-    if (!id) { frame.src = ''; return; }
+    const pastList = document.getElementById('pastList');
+    pastList.style.display = 'none';
+    pastList.innerHTML = '';
+    frame.src = '';
+
+    if (!id) return;
 
     if (currentLotto.startsWith('past')) {
-      frame.srcdoc = '<div style="font-family:system-ui;padding:20px;color:#334155;text-align:center"><p>Loading past files…</p></div>';
+      pastList.style.display = 'block';
+      pastList.innerHTML = '<p style="color:#64748b">Loading past files…</p>';
       const listUrl = 'https://script.google.com/macros/s/AKfycbwhI-CtvsVTfqgavG0gAUIgEi7TjAsg3wp0KqoSVuzB-gb18Hthd85QkijyEVgEUcWPkg/exec?folder=' + id;
       fetch(listUrl)
         .then(r => r.json())
         .then(files => {
+          pastList.innerHTML = '';
           if (!files || !files.length) {
-            frame.srcdoc = '<div style="font-family:system-ui;padding:20px;color:#64748b;text-align:center"><p>No past files in this folder yet.</p></div>';
+            pastList.innerHTML = '<p style="color:#64748b">No past files in this folder yet.</p>';
             return;
           }
-          let html = '<div style="font-family:system-ui;padding:16px;color:#0b1220"><h3 style="margin-bottom:12px">Past files</h3><p style="margin-bottom:12px;color:#475569">Click a file to open it here.</p>';
           files.forEach(f => {
-            html += '<button data-id="' + f.id + '" style="display:block;width:100%;text-align:left;padding:10px 12px;border:1px solid #cbd5e1;border-radius:6px;background:#f8fafc;cursor:pointer;font-weight:600;margin-bottom:6px">' + f.name + '</button>';
+            const btn = document.createElement('button');
+            btn.textContent = f.name;
+            btn.style.cssText = 'display:block;width:100%;text-align:left;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;background:#f8fafc;cursor:pointer;font-weight:600;margin-bottom:6px;color:#0b1220';
+            btn.onclick = () => {
+              frame.src = 'https://docs.google.com/spreadsheets/d/' + f.id + '/edit?usp=sharing';
+            };
+            pastList.appendChild(btn);
           });
-          html += '</div>';
-          frame.srcdoc = html;
-          setTimeout(() => {
-            const doc = frame.contentDocument;
-            if (!doc) return;
-            doc.querySelectorAll('button[data-id]').forEach(btn => {
-              btn.addEventListener('click', () => {
-                frame.src = 'https://docs.google.com/spreadsheets/d/' + btn.dataset.id + '/edit?usp=sharing';
-              });
-            });
-          }, 100);
         })
         .catch(() => {
-          frame.srcdoc = '<div style="font-family:system-ui;padding:20px;color:#b91c1c;text-align:center"><p>Could not load file list. Check the Apps Script is deployed as Anyone.</p></div>';
+          pastList.innerHTML = '<p style="color:#b91c1c">Could not load file list.</p>';
         });
     } else {
       frame.src = 'https://docs.google.com/spreadsheets/d/' + id + '/edit?usp=sharing';
